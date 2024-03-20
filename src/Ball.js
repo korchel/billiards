@@ -6,17 +6,16 @@ class Ball {
       this.color = color;
       this.position = position;
       this.radius = 100;
-      this.speed = 0.1;
+      this.speed = {x: 5, y: 5};
       // this.elasticity 
     }
 
-    draw() {
-        this.context.beginPath();
-        this.context.fillStyle = this.color;
-        this.context.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2)
-        this.context.fill();
-        this.context.closePath();
-    }
+  draw() {
+    this.circle = new Path2D();
+    this.circle.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+    this.context.fillStyle = this.color;
+    this.context.fill(this.circle);
+  }
   getDistance(pos1, pos2) {
     const x1 = pos1.x;
     const y1 = pos1.y;
@@ -45,6 +44,8 @@ class Ball {
       this.position.x += this.speed.x * Math.cos(pushAngle)
       this.position.y += this.speed.y * Math.sin(pushAngle)
     }
+    // this.position.x += this.speed.x 
+    // this.position.y += this.speed.y 
     if (this.position.x + this.speed.x > this.canvas.width - this.radius ||
     this.position.x + this.speed.x < this.radius) {
       this.speed.x = -this.speed.x;
