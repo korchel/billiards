@@ -87,11 +87,10 @@ const Canvas = (props) => {
   }, []);
 
   return (
-    <>
+    <div className="container">
       <canvas ref={ref} {...props} />
       {showColorMenu && <ColorMenu ball={currentBall} modalCoordinates={modalCoordinates} setShowColorMenu={setShowColorMenu} />}
-    </>
-    
+    </div>
   );
 };
 
