@@ -1,10 +1,10 @@
 class Ball {
-  constructor(context, canvas, position, color) {
+  constructor(context, canvas, position, radius, color) {
     this.canvas = canvas;
     this.context = context
     this.color = color;
     this.position = position;
-    this.radius = 100;
+    this.radius = radius;
     this.speed = {x: 0, y: 0};
 
     // this.elasticity 

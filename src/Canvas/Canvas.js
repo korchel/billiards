@@ -8,6 +8,19 @@ const getPushAngle = (push) => {
   return Math.atan2( y2 - y1,  x2 - x1);
 }
 
+const ballKinds = [
+  {radius: 28, color: '#f6546a'},
+  {radius: 20, color: '#000080'},
+  {radius: 30, color: '#065535'},
+  {radius: 36, color: '#509d98'},
+  {radius: 25, color: '#a94064'},
+  {radius: 55, color: '#668f25'},
+  {radius: 19, color: '#934946'},
+  {radius: 38, color: '#6897bb'},
+  {radius: 60, color: '#963c58'},
+  {radius: 45, color: '#653e87'},
+];
+
 const Canvas = (props) => {
   const ref = useRef();
   const [showColorMenu, setShowColorMenu] = useState(false)
@@ -17,19 +30,14 @@ const Canvas = (props) => {
   useEffect(() => {
     const canvas = ref.current;
     const context = canvas.getContext('2d');
-  
-    const balls = [];
+
     const push = {};
     let flag = 0;
 
-    for (let i = 0; i < 2; i += 1) {
-      if (i < 1) {
-        balls.push(new Ball(context, canvas, { x: 200 * (i + 0.5), y: 200 }, 'green'))
-      }
-      if (i >= 1) {
-        balls.push(new Ball(context, canvas, { x: 200 * (i + 0.5), y: 400 }, 'red'))
-      }
-    };
+    const balls = ballKinds.map(({radius, color}, i) => {
+      const position = i < 5 ? { x: 150 * (i + 0.5), y: 260 } : { x: 150 * (i - 5 + 0.5), y: 520 };
+      return new Ball(context, canvas, position, radius, color);
+    });
 
     ref.current.addEventListener('mousedown', (event) => {
       balls.forEach((ball) => {
