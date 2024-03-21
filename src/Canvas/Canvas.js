@@ -5,11 +5,12 @@ import ColorMenu from "../ColorMenu";
 
 const getPushAngle = (push) => {
   const { x1, x2, y1, y2 } = push;
-  return Math.atan2(x2 - x1, y2 - y1);
+  return Math.atan2( y2 - y1,  x2 - x1);
 }
 
 const Canvas = (props) => {
   const ref = useRef();
+  const [showColorMenu, setShowColorMenu] = useState(false)
   const [currentBall, setCurrentBall] = useState(null);
   const [modalCoordinates, setModalCoordinates] = useState({ x: 0, y: 0 });
 
@@ -31,27 +32,37 @@ const Canvas = (props) => {
     };
 
     ref.current.addEventListener('mousedown', (event) => {
-      console.log(event)
-      push.x1 = event.clientX;
-      push.y1 = event.clientY;
+      balls.forEach((ball) => {
+        if (context.isPointInPath(ball.circle, event.clientX, event.clientY)) {
+          setCurrentBall(ball);
+          push.x1 = event.clientX;
+          push.y1 = event.clientY;
+        }
+      })
       flag = 0
     });
-    ref.current.addEventListener('mousemove', (event) => {
-      push.x2 = event.clientX;
-      push.y2 = event.clientY;
+    ref.current.addEventListener('mousemove', () => {
       flag = 1;
     });
     ref.current.addEventListener('mouseup', (event) => {
       if (flag === 0) {
         balls.forEach((ball) => {
-        if (context.isPointInPath(ball.circle, event.clientX, event.clientY)) {
-          setCurrentBall(ball);
-          setModalCoordinates({ x: event.clientX, y: event.clientY });
-        }
-      })
+          if (context.isPointInPath(ball.circle, event.clientX, event.clientY)) {
+            setShowColorMenu(true)
+            setModalCoordinates({ x: event.clientX, y: event.clientY });
+          }
+        })
       } else {
-        push.x2 = event.clientX;
-        push.y2 = event.clientY;
+        if (push.x1 && push.y1) {
+          push.x2 = event.clientX;
+          push.y2 = event.clientY;
+          balls.forEach((ball) => {
+            if (context.isPointInPath(ball.circle, push.x1, push.y1)) {
+              ball.push(getPushAngle(push));
+            }
+          })
+          // console.log(getPushAngle(push) * 180 / Math.PI)     
+        }
       }
     });
 
@@ -60,7 +71,7 @@ const Canvas = (props) => {
       context.clearRect(0, 0, canvas.width, canvas.height)
       balls.forEach((ball) => {
         ball.draw()
-        ball.move(push);
+        ball.move();
         ball.detectCollision(balls);
       })
     };
@@ -70,7 +81,7 @@ const Canvas = (props) => {
   return (
     <>
       <canvas ref={ref} {...props} />
-      {!!currentBall && <ColorMenu ball={currentBall} modalCoordinates={modalCoordinates} setCurrentBall={setCurrentBall} />}
+      {showColorMenu && <ColorMenu ball={currentBall} modalCoordinates={modalCoordinates} setShowColorMenu={setShowColorMenu} />}
     </>
     
   );

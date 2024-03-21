@@ -1,4 +1,4 @@
-const ColorMenu = ({ball, modalCoordinates, setCurrentBall}) => {
+const ColorMenu = ({ball, modalCoordinates, setShowColorMenu}) => {
   const handleChange = (event) => {
     ball.color = event.target.value;
   };
@@ -6,7 +6,7 @@ const ColorMenu = ({ball, modalCoordinates, setCurrentBall}) => {
   return (
     <div className="" style={{position: 'fixed', top: `${y}px`, left: `${x}px`}}>
       <input type="color" onChange={handleChange} />
-      <button onClick={()=> setCurrentBall(null)}></button>
+      <button onClick={()=> setShowColorMenu(false)}></button>
     </div>
   );
 };
