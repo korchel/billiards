@@ -1,3 +1,27 @@
+const collideBalls = (ball1, ball2) => {
+      let dx = ball2.position.x - ball1.position.x;
+      let dy = ball2.position.y - ball1.position.y;
+
+      let no = {x: dx / distance, y:dy/distance}
+
+      let vRelativeVelocity = {x: ball1.speed.x - ball2.speed.x, y:ball1.speed.y - ball2.speed.y};
+
+      let speed = vRelativeVelocity.x * vCollisionNorm.x + vRelativeVelocity.y * vCollisionNorm.y;
+
+      if(speed < 0) return;
+      let impulse = 2 * speed / (ball1.mass + ball2.mass);
+     
+      ball1.speed.x -= (impulse * ball2.mass * vCollisionNorm.x);
+      ball1.speed.y -= (impulse * ball2.mass * vCollisionNorm.y);
+      ball2.speed.x += (impulse * ball1.mass * vCollisionNorm.x);
+      ball2.speed.y += (impulse * ball1.mass * vCollisionNorm.y);
+     
+      ball1.speed.x = (ball1.speed.x * ball1.elasticity);
+      ball1.speed.y = (ball1.speed.y * ball1.elasticity);
+      ball2.speed.x = (ball2.speed.x * ball2.elasticity);
+      ball2.speed.y = (ball2.speed.y * ball2.elasticity);
+}
+
 class Ball {
   constructor(context, canvas, position, radius, color) {
     this.canvas = canvas;
@@ -7,7 +31,7 @@ class Ball {
     this.radius = radius;
     this.speed = {x: 0, y: 0};
     this.mass = this.radius;
-    this.elasticity = 0.8;
+    this.elasticity = 0.9;
     this.friction = 0.005;
   }
 
@@ -26,14 +50,13 @@ class Ball {
   }
 
   ballHitAnotherBall(balls) {
-    let collided = false;
+
     for (let i = 0; i < balls.length; i += 1) {
       if (this === balls[i]) continue;
       if (this.getDistance(this.position, balls[i].position) < this.radius + balls[i].radius) {
-        collided = true;
+        collideBalls(this, balls[i]);
       }
     }
-    return collided;
   }
 
   push(angle) {
@@ -56,6 +79,7 @@ class Ball {
       this.position.y + this.speed.y < this.radius) {
       this.speed.y = -this.speed.y * this.elasticity;
     }
+
   }
 }
 
