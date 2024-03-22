@@ -80,7 +80,7 @@ const Canvas = (props) => {
       balls.forEach((ball) => {
         ball.draw()
         ball.move();
-        ball.detectCollision(balls);
+        ball.ballHitAnotherBall(balls);
       })
     };
     animate();

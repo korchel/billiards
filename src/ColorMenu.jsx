@@ -14,7 +14,7 @@ const ColorMenu = ({ball, modalCoordinates, setShowColorMenu}) => {
         id="color"
         type="color"
         onChange={handleChange}
-        value="#aaaaaa"
+        value={ball.color}
       />
     </div>
   );

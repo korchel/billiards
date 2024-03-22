@@ -6,8 +6,9 @@ class Ball {
     this.position = position;
     this.radius = radius;
     this.speed = {x: 0, y: 0};
-
-    // this.elasticity 
+    this.mass = this.radius;
+    this.elasticity = 0.8;
+    this.friction = 0.005;
   }
 
   draw() {
@@ -24,30 +25,36 @@ class Ball {
     return Math.sqrt(Math.pow(y2 - y1, 2) + Math.pow(x2 - x1, 2));
   }
 
-  detectCollision(balls) {
+  ballHitAnotherBall(balls) {
+    let collided = false;
     for (let i = 0; i < balls.length; i += 1) {
       if (this === balls[i]) continue;
       if (this.getDistance(this.position, balls[i].position) < this.radius + balls[i].radius) {
-        console.log('collision!')
+        collided = true;
       }
     }
+    return collided;
   }
 
   push(angle) {
     this.pushAngle = angle;
-    this.speed = {x: 4 * Math.cos(this.pushAngle), y: 4 * Math.sin(this.pushAngle)} 
+    this.speed = {x: 4 * Math.cos(this.pushAngle) * 60 / this.mass, y: 4 * Math.sin(this.pushAngle) * 60 / this.mass} 
   }
 
   move() {
-    this.position.x += this.speed.x
-    this.position.y += this.speed.y
+    this.speed.x = this.speed.x - this.speed.x * this.friction;
+    this.speed.y = this.speed.y - this.speed.y * this.friction;
+  
+    this.position.x += this.speed.x;
+    this.position.y += this.speed.y;
+
     if (this.position.x + this.speed.x > this.canvas.width - this.radius ||
     this.position.x + this.speed.x < this.radius) {
-      this.speed.x = -this.speed.x;
+      this.speed.x = -this.speed.x * this.elasticity;
     }
     if (this.position.y + this.speed.y > this.canvas.height - this.radius ||
       this.position.y + this.speed.y < this.radius) {
-      this.speed.y = -this.speed.y;
+      this.speed.y = -this.speed.y * this.elasticity;
     }
   }
 }
