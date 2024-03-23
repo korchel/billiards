@@ -1,12 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import Ball from '../Ball';
 import ColorMenu from "../ColorMenu";
-
-
-const getPushAngle = (push) => {
-  const { x1, x2, y1, y2 } = push;
-  return Math.atan2( y2 - y1,  x2 - x1);
-}
+import ballsCollide from "../auxiliaryFunctions/ballsCollide";
+import push from "../auxiliaryFunctions/push";
 
 const ballKinds = [
   {radius: 28, color: '#f6546a'},
@@ -31,7 +27,7 @@ const Canvas = (props) => {
     const canvas = ref.current;
     const context = canvas.getContext('2d');
 
-    const push = {};
+    const pushVector = {};
     let flag = 0;
 
     const balls = ballKinds.map(({radius, color}, i) => {
@@ -43,8 +39,8 @@ const Canvas = (props) => {
       balls.forEach((ball) => {
         if (context.isPointInPath(ball.circle, event.clientX, event.clientY)) {
           setCurrentBall(ball);
-          push.x1 = event.clientX;
-          push.y1 = event.clientY;
+          pushVector.x1 = event.clientX;
+          pushVector.y1 = event.clientY;
         }
       })
       flag = 0
@@ -61,15 +57,14 @@ const Canvas = (props) => {
           }
         })
       } else {
-        if (push.x1 && push.y1) {
-          push.x2 = event.clientX;
-          push.y2 = event.clientY;
+        if (pushVector.x1 && pushVector.y1) {
+          pushVector.x2 = event.clientX;
+          pushVector.y2 = event.clientY;
           balls.forEach((ball) => {
-            if (context.isPointInPath(ball.circle, push.x1, push.y1)) {
-              ball.push(getPushAngle(push));
+            if (context.isPointInPath(ball.circle, pushVector.x1, pushVector.y1)) {
+              push(ball, pushVector);
             }
-          })
-          // console.log(getPushAngle(push) * 180 / Math.PI)     
+          })   
         }
       }
     });
@@ -80,8 +75,8 @@ const Canvas = (props) => {
       balls.forEach((ball) => {
         ball.draw()
         ball.move();
-        ball.ballHitAnotherBall(balls);
-      })
+        ballsCollide(ball, balls);
+      });
     };
     animate();
   }, []);
