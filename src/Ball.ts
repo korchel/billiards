@@ -1,5 +1,19 @@
+import { ISpeed, IPosition } from './types/types';
+
 class Ball {
-  constructor(context, canvas, position, radius, color) {
+  public speed: ISpeed;
+  public mass: number;
+  public elasticity: number;
+  public friction: number;
+  public circle: Path2D;
+  
+  constructor(
+    public context: CanvasRenderingContext2D,
+    public canvas: HTMLCanvasElement,
+    public position: IPosition,
+    public radius: number,
+    public color: string,
+    ) {
     this.canvas = canvas;
     this.context = context
     this.color = color;
@@ -18,14 +32,12 @@ class Ball {
     this.context.fill(this.circle);
   }
 
-
-
   move() {
     this.speed.x = this.speed.x - this.speed.x * this.friction;
     this.speed.y = this.speed.y - this.speed.y * this.friction;
   
-    this.position.x += this.speed.x;
-    this.position.y += this.speed.y;
+    this.position.x = this.position.x + this.speed.x;
+    this.position.y = this.position.y + this.speed.y;
 
     if (this.position.x + this.speed.x > this.canvas.width - this.radius ||
     this.position.x + this.speed.x < this.radius) {
