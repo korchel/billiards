@@ -39,13 +39,20 @@ const Canvas = (props) => {
     let mouseFlag = 0;
     if (context) {
       const balls: Ball[] = ballKinds.map(({ radius, color }, i) => {
-        const position = i < 5 ? { x: 150 * (i + 0.5), y: 260 } : { x: 150 * (i - 5 + 0.5), y: 520 };
+        const position = i < 5
+          ? { x: canvas.width / 6 * (i + 1), y: canvas.height / 3 }
+          : { x: canvas.width / 6 * (i - 4), y: canvas.height / 3 * 2 };
         return new Ball(context, canvas, position, radius, color);
       });
-    
+
+      window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+      })
+
       canvas.addEventListener('mousedown', (event) => {
       balls.forEach((ball) => {
-        if (context.isPointInPath(ball.circle, event.clientX, event.clientY)) {
+        if (context.isPointInPath(ball.circle, event.offsetX, event.offsetY)) {
           setCurrentBall(ball);
           pushVector.x1 = event.clientX;
           pushVector.y1 = event.clientY;
@@ -59,15 +66,19 @@ const Canvas = (props) => {
       canvas.addEventListener('mouseup', (event) => {
         if (mouseFlag === 0) {
           balls.forEach((ball) => {
-            if (context.isPointInPath(ball.circle, event.clientX, event.clientY)) {
+            if (context.isPointInPath(ball.circle, event.offsetX, event.offsetY)) {
               setShowColorMenu(true)
-              setModalCoordinates({ x: event.clientX, y: event.clientY });
+              setModalCoordinates({ x: event.offsetX, y: event.offsetY });
             }
           });
+          pushVector.x1 = 0;
+          pushVector.x2 = 0;
+          pushVector.y1 = 0;
+          pushVector.y2 = 0;
         } else {
           if (pushVector.x1 && pushVector.y1) {
-            pushVector.x2 = event.clientX;
-            pushVector.y2 = event.clientY;
+            pushVector.x2 = event.offsetX;
+            pushVector.y2 = event.offsetY;
             balls.forEach((ball) => {
               if (context.isPointInPath(ball.circle, pushVector.x1, pushVector.y1)) {
                 push(ball, pushVector);
@@ -90,10 +101,10 @@ const Canvas = (props) => {
   }, []);
 
   return (
-    <div className="container">
+    <>
       <canvas ref={ref} {...props} />
       {showColorMenu && <ColorMenu ball={currentBall} modalCoordinates={modalCoordinates} setShowColorMenu={setShowColorMenu} />}
-    </div>
+    </>
   );
 };
 
