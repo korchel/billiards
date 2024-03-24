@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { type FC } from 'react';
 
-import Canvas from "./components/Canvas.tsx";
+import Canvas from './components/Canvas';
 
-const App = () => {
+const App: FC = () => {
   return (
-    <Canvas height={window.innerHeight} width={window.innerWidth} />
+    <Canvas />
   );
 };
 

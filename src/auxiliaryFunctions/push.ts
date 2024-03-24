@@ -1,5 +1,5 @@
-import { IPushVector } from "../types/types";
-import Ball from "../Ball";
+import { type IPushVector } from '../types/types';
+import type Ball from '../Ball';
 
 const getPushAngle = (pushVector: IPushVector): number => {
   const { x1, x2, y1, y2 } = pushVector;
@@ -10,5 +10,5 @@ const push = (ball: Ball, pushVector: IPushVector): void => {
   const angle = getPushAngle(pushVector);
   ball.speed = { x: 4 * Math.cos(angle) * 60 / ball.mass, y: 4 * Math.sin(angle) * 60 / ball.mass };
 };
-  
+
 export default push;
