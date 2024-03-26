@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { MouseEventHandler, useEffect, useRef, useState } from 'react';
 
 import Ball from '../Ball';
 import ballsCollide from '../auxiliaryFunctions/ballsCollide';
@@ -26,12 +26,12 @@ export const useCanvas: UseCanvas = () => {
 
   const ballKinds = [
     { radius: 28, color: '#f6546a' },
-    { radius: 20, color: '#000080' },
-    { radius: 30, color: '#065535' },
+    { radius: 21, color: 'red' },
+    { radius: 30, color: 'green' },
     { radius: 36, color: '#509d98' },
     { radius: 25, color: '#a94010' },
     { radius: 55, color: '#668f25' },
-    { radius: 19, color: '#934946' },
+    { radius: 19, color: 'white' },
     { radius: 38, color: '#6897bb' },
     { radius: 60, color: '#963c58' },
     { radius: 45, color: '#653e87' },
@@ -62,7 +62,8 @@ export const useCanvas: UseCanvas = () => {
         canvas.height = window.innerHeight;
       });
 
-      canvas.addEventListener('mousedown', (event) => {
+      const handleMouseDown = (event: MouseEvent): void => {
+        console.log('mousedown2');
         balls.forEach((ball) => {
           if (ball.circle && context.isPointInPath(ball.circle, event.offsetX, event.offsetY)) {
             setCurrentBall(ball);
@@ -72,11 +73,14 @@ export const useCanvas: UseCanvas = () => {
         });
         setShowColorMenu(false);
         mouseFlag = 0;
-      });
-      canvas.addEventListener('mousemove', () => {
+      };
+
+      const handleMouseMove = () => {
         mouseFlag = 1;
-      });
-      canvas.addEventListener('mouseup', (event) => {
+      };
+
+      const handleMouseUp = (event: MouseEvent): void => {
+        console.log('mouseup2');
         if (mouseFlag === 0) {
           if (pushVector.x1 && pushVector.y1) {
             setShowColorMenu(true);
@@ -95,7 +99,12 @@ export const useCanvas: UseCanvas = () => {
             }
           });
         }
-      });
+      };
+
+      window.addEventListener('mousedown', handleMouseDown);
+      canvas.addEventListener('mousemove', handleMouseMove);
+      canvas.addEventListener('mouseup', handleMouseUp);
+
       const animate = (): void => {
         requestAnimationFrame(animate);
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -107,6 +116,11 @@ export const useCanvas: UseCanvas = () => {
       };
       animate();
     }
+    return () => {
+      window.removeEventListener('mousedown', handleMouseDown)
+      canvas.removeEventListener('mousemove', handleMouseMove)
+      canvas.removeEventListener('mouseup', handleMouseUp)
+    };
   }, []);
   return { showColorMenu, setShowColorMenu, modalCoordinates, currentBall, canvasRef };
 };
