@@ -8,13 +8,13 @@ class Ball {
   public circle: Path2D | null;
 
   constructor (
-    public context: CanvasRenderingContext2D,
+    public context: CanvasRenderingContext2D | null,
     public canvas: HTMLCanvasElement,
     public position: IPosition,
     public radius: number,
     public color: string,
   ) {
-    this.canvas = canvas;
+    this.canvas = canvas || null;
     this.context = context;
     this.color = color;
     this.position = position;
@@ -29,8 +29,10 @@ class Ball {
   draw (): void {
     this.circle = new Path2D();
     this.circle.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
-    this.context.fillStyle = this.color;
-    this.context.fill(this.circle);
+    if (this.context) {
+      this.context.fillStyle = this.color;
+      this.context.fill(this.circle);
+    }
   }
 
   move (): void {
